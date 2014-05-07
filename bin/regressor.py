@@ -87,6 +87,15 @@ def simple_regression(df, col1, col2):
     b = y * x.T * np.linalg.inv(x*x.T)
     return b
 
+def me_simple_regression(df, col1, col2):
+
+    params = simple_regression(df, col1, col2)
+    me = 0
+
+    for :
+        me += math.fabs(yList.get(i)-(x0List.get(i)*params[0]+params[1]))
+
+    return me/yList.size()
 
 def degrees_distance(angleA, angleB):
 
