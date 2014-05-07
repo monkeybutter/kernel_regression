@@ -22,9 +22,9 @@ def test(file_path):
     #print('ME simple regression: {}'.format(me_simple_regression(df, 'MetarwindSpeed', 'WindSpd')))
     #print('RMSE simple regression: {}'.format(rmse_simple_regression(df, 'MetarwindSpeed', 'WindSpd')))
 
-    params = double_linear_regression(df, 'MetarwindSpeed', 'WindSpd', 'SWRad')
+    params = weighted_double_linear_regression(df, 'MetarwindSpeed', 'WindSpd', 'SWRad', 8, 2)
     print(params)
-    print('{}, {}'.format(params[0, 0], params[0, 1], params[0, 2]))
+    print('{}, {}, {}'.format(params[0, 0], params[0, 1], params[0, 2]))
 
 def me_no_regression(df, col1, col2):
     """
@@ -91,7 +91,7 @@ def simple_linear_regression(df, y_name, x_name):
     b = y * x.T * np.linalg.inv(x*x.T)
     return b
 
-def me_simple_regression(df, y_name, x_name):
+def me_simple_linear_regression(df, y_name, x_name):
 
     params = simple_linear_regression(df, y_name, x_name)
 
@@ -104,7 +104,7 @@ def me_simple_regression(df, y_name, x_name):
     return e/df.shape[0]
 
 
-def rmse_simple_regression(df, y_name, x_name):
+def rmse_simple_linear_regression(df, y_name, x_name):
 
     params = simple_linear_regression(df, y_name, x_name)
 
@@ -117,7 +117,7 @@ def rmse_simple_regression(df, y_name, x_name):
     return math.sqrt(se/df.shape[0])
 
 
-def weighted_linear_regression(df, y_name, x_name, x_centre, width):
+def weighted_simple_linear_regression(df, y_name, x_name, x_centre, width):
 
     df = df[[x_name, y_name]]
     data = np.matrix(df)
@@ -151,6 +151,54 @@ def double_linear_regression(df, y_name, x0_name, x1_name):
     x = np.matrix(np.vstack((x0, x1, np.ones(x0.shape[0]))))
 
     b = y * x.T * np.linalg.inv(x*x.T)
+    return b
+
+
+def weighted_double_linear_regression(df, y_name, x0_name, x1_name, x_centre, width):
+
+    df = df[[x0_name, x1_name, y_name]]
+    data = np.matrix(df)
+
+    y = np.matrix(np.array(df[y_name]))
+    x0 = np.array(df[x0_name])
+    x1 = np.array(df[x1_name])
+    x = np.matrix(np.vstack((x0, x1, np.ones(x0.shape[0]))))
+
+    w = np.matrix(np.zeros(shape=(x0.shape[0], x0.shape[0])))
+
+    for i in range(x0.shape[0]):
+        for j in range(x0.shape[0]):
+            if i == j:
+                if math.fabs(x0[i]-x_centre) < width:
+                    w[i, j] = 1.0
+                else:
+                    w[i, j] = 0.0
+
+    b = y * w * x.T * np.linalg.inv(x * w * x.T)
+    return b
+
+
+def direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_centre, wind_dir_span):
+    df = df[[x_name, wind_dir_name, y_name]]
+    data = np.matrix(df)
+
+    y = np.matrix(np.array(df[y_name]))
+    x0 = np.array(df[x_name])
+    x = np.matrix(np.vstack((x0, np.ones(x0.shape[0]))))
+
+    w = np.matrix(np.zeros(shape=(x0.shape[0], x0.shape[0])))
+
+    for i in range(x0.shape[0]):
+        for j in range(x0.shape[0]):
+            if i == j:
+                distance = degrees_distance(wind_dir_centre, df[wind_dir_name][i])
+                if distance < wind_dir_span:
+                    # Kernel cuadratic
+                    w[i, j] = 70.0/81.0 * (1-math.fabs(distance/wind_dir_span)**3)**3
+                else:
+                    w[i, j] = 0.0
+
+    b = y * w * x.T * np.linalg.inv(x * w * x.T)
     return b
 
 
