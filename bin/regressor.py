@@ -15,16 +15,13 @@ def test(file_path):
     df = pandas.read_csv(file_path, na_values=['NaN', ' NaN'])
     df = df[np.isfinite(df['MetarwindSpeed'])]
     df = df[np.isfinite(df['WindSpd'])]
+    df = df[np.isfinite(df['WindDir'])]
 
     print('___________')
-    #print('ME no regression: {}'.format(me_no_regression(df, 'MetarwindSpeed', 'WindSpd')))
-    #print('RMSE no regression: {}'.format(rmse_no_regression(df, 'MetarwindSpeed', 'WindSpd')))
-    #print('ME simple regression: {}'.format(me_simple_regression(df, 'MetarwindSpeed', 'WindSpd')))
-    #print('RMSE simple regression: {}'.format(rmse_simple_regression(df, 'MetarwindSpeed', 'WindSpd')))
+    print('ME no regression: {}'.format(me_no_regression(df[:2000], 'MetarwindSpeed', 'WindSpd')))
+    print('ME simple regression: {}'.format(me_simple_linear_regression(df[:2000], 'MetarwindSpeed', 'WindSpd')))
+    print('ME direction weighted simple regression: {}'.format(me_direction_weighted_simple_linear_regression(df[:2000], 'MetarwindSpeed', 'WindSpd', 'WindDir', 35)))
 
-    params = weighted_double_linear_regression(df, 'MetarwindSpeed', 'WindSpd', 'SWRad', 8, 2)
-    print(params)
-    print('{}, {}, {}'.format(params[0, 0], params[0, 1], params[0, 2]))
 
 def me_no_regression(df, col1, col2):
     """
@@ -191,7 +188,7 @@ def direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_nam
     for i in range(x0.shape[0]):
         for j in range(x0.shape[0]):
             if i == j:
-                distance = degrees_distance(wind_dir_centre, df[wind_dir_name][i])
+                distance = degrees_distance(wind_dir_centre, df[wind_dir_name].iloc[i])
                 if distance < wind_dir_span:
                     # Kernel cuadratic
                     w[i, j] = 70.0/81.0 * (1-math.fabs(distance/wind_dir_span)**3)**3
@@ -200,6 +197,27 @@ def direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_nam
 
     b = y * w * x.T * np.linalg.inv(x * w * x.T)
     return b
+
+def me_direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_span):
+
+    e = 0
+
+    for index, row in df.iterrows():
+        params = direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
+        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
+
+    return e/df.shape[0]
+
+
+def rmse_direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_span):
+
+    se = 0
+
+    for index, row in df.iterrows():
+        params = direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
+        se += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))**2
+
+    return math.sqrt(se/df.shape[0])
 
 
 def degrees_distance(angleA, angleB):
