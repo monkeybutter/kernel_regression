@@ -4,60 +4,9 @@ import numpy as np
 import math
 
 
-
-def me_no_regression(df, col1, col2):
-    """
-
-    :param file_path:
-    """
-    values = (df[col1] - df[col2])**2
-
-    values = values.apply(np.sqrt)
-
-    return values.sum()/df.shape[0]
-
-
-def rmse_no_regression(df, col1, col2):
-    """
-
-    :param file_path:
-    """
-    se = ((df[col1] - df[col2])**2).sum()
-
-    return math.sqrt(se/df.shape[0])
-
-
-"""
-def plot_simple_regression(df, col1, col2):
-
-    df = df[[col2, col1]]
-    data = np.matrix(df)
-
-    org = LinearRegression()
-    x, y = data[:,0], data[:,1]
-    org.fit(x, y)
-
-    print(org.coef_)
-    print(org.intercept_)
-
-    original_score = '{0:.3f}'.format(org.score(x, y))
-
-    plt.xlim(df[col2].min()-1, df[col2].max()+1)
-    plt.ylim(df[col1].min()-1, df[col1].max()+1)
-
-    plt.scatter(df[col2], df[col1], marker='x', color='b')
-    plt.xlabel('GFS Wind Speed [knots]')
-    plt.ylabel('Metar Wind Speed[knots]')
-
-    testo = np.arange(df[col2].min(), df[col2].max(), 0.1)
-    testo = np.array(np.matrix(testo).T)
-
-    plt.plot(testo, org.predict(testo), 'k')
-    plt.title('Linear Regression')
-    plt.grid()
-
-    plt.show()
-"""
+#####################################################
+############### Regression Functions ################
+#####################################################
 
 def simple_linear_regression(df, y_name, x_name):
 
@@ -70,31 +19,6 @@ def simple_linear_regression(df, y_name, x_name):
 
     b = y * x.T * np.linalg.inv(x*x.T)
     return b
-
-def me_simple_linear_regression(test_df, train_df, y_name, x_name):
-
-    params = simple_linear_regression(train_df, y_name, x_name)
-
-    e = 0
-
-    for index, row in test_df.iterrows():
-        #print(index)
-        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
-
-    return e/test_df.shape[0]
-
-
-def rmse_simple_linear_regression(test_df, train_df, y_name, x_name):
-
-    params = simple_linear_regression(train_df, y_name, x_name)
-
-    se = 0
-
-    for index, row in test_df.iterrows():
-        #print(index)
-        se += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))**2
-
-    return math.sqrt(se/test_df.shape[0])
 
 
 def weighted_simple_linear_regression(df, y_name, x_name, x_centre, width):
@@ -123,7 +47,6 @@ def weighted_simple_linear_regression(df, y_name, x_name, x_centre, width):
 def double_linear_regression(df, y_name, x0_name, x1_name):
 
     df = df[[x0_name, x1_name, y_name]]
-    data = np.matrix(df)
 
     y = np.matrix(np.array(df[y_name]))
     x0 = np.array(df[x0_name])
@@ -137,7 +60,6 @@ def double_linear_regression(df, y_name, x0_name, x1_name):
 def weighted_double_linear_regression(df, y_name, x0_name, x1_name, x_centre, width):
 
     df = df[[x0_name, x1_name, y_name]]
-    data = np.matrix(df)
 
     y = np.matrix(np.array(df[y_name]))
     x0 = np.array(df[x0_name])
@@ -160,7 +82,6 @@ def weighted_double_linear_regression(df, y_name, x0_name, x1_name, x_centre, wi
 
 def direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_centre, wind_dir_span):
     df = df[[x_name, wind_dir_name, y_name]]
-    data = np.matrix(df)
 
     y = np.matrix(np.array(df[y_name]))
     x0 = np.array(df[x_name])
@@ -180,27 +101,6 @@ def direction_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_nam
 
     b = y * w * x.T * np.linalg.inv(x * w * x.T)
     return b
-
-def me_direction_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span):
-
-    e = 0
-
-    for index, row in test_df.iterrows():
-        params = direction_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
-        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
-
-    return e/test_df.shape[0]
-
-
-def rmse_direction_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span):
-
-    se = 0
-
-    for index, row in test_df.iterrows():
-        params = direction_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
-        se += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))**2
-
-    return math.sqrt(se/test_df.shape[0])
 
 
 def direction_speed_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_centre, wind_dir_span, wind_spd_centre, wind_spd_span):
@@ -229,24 +129,109 @@ def direction_speed_weighted_simple_linear_regression(df, y_name, x_name, wind_d
     return b
 
 
-def me_direction_speed_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, wind_dir_span, wind_spd_span):
+#####################################################
+############# Regression Test Functions #############
+#####################################################
+
+def me_no_regression(df, col1, col2):
+    """
+
+    :param file_path:
+    """
+    values = (df[col1] - df[col2])**2
+
+    values = values.apply(np.sqrt)
+
+    return values.sum()/df.shape[0]
+
+
+def rmse_no_regression(df, col1, col2):
+    """
+
+    :param file_path:
+    """
+    se = ((df[col1] - df[col2])**2).sum()
+
+    return math.sqrt(se/df.shape[0])
+
+
+def me_simple_linear_regression(test_df, train_df, y_name, x_name):
+
+    params = simple_linear_regression(train_df, y_name, x_name)
 
     e = 0
 
-    for index, row in df.iterrows():
-        params = direction_speed_weighted_simple_linear_regression(df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span, row[x_name], wind_spd_span)
+    for index, row in test_df.iterrows():
+        #print(index)
         e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
 
-    return e/df.shape[0]
+    return e/test_df.shape[0]
 
 
-def degrees_distance(angleA, angleB):
+def rmse_simple_linear_regression(test_df, train_df, y_name, x_name):
 
-    return min(math.fabs(angleA-angleB), 360-math.fabs(angleA-angleB))
+    params = simple_linear_regression(train_df, y_name, x_name)
+
+    se = 0
+
+    for index, row in test_df.iterrows():
+        #print(index)
+        se += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))**2
+
+    return math.sqrt(se/test_df.shape[0])
 
 
-if __name__ == "__main__":
+def me_direction_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span):
 
-    test('../data/LEBBData.csv')
-    test('../data/LESOData.csv')
-    test('../data/LEVTData.csv')
+    e = 0
+
+    #print('Test dataset is: {}'.format(test_df.shape[0]))
+    #print('Train dataset is: {}'.format(train_df.shape[0]))
+
+    for index, row in test_df.iterrows():
+        params = direction_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
+        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
+
+    return e/test_df.shape[0]
+
+
+def rmse_direction_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span):
+
+    se = 0
+
+    for index, row in test_df.iterrows():
+        params = direction_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span)
+        se += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))**2
+
+    return math.sqrt(se/test_df.shape[0])
+
+
+def me_direction_speed_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span, wind_spd_span):
+
+    e = 0
+
+    for index, row in test_df.iterrows():
+        params = direction_speed_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span, row[x_name], wind_spd_span)
+        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
+
+    return e/test_df.shape[0]
+
+
+def rmse_direction_speed_weighted_simple_linear_regression(test_df, train_df, y_name, x_name, wind_dir_name, wind_dir_span, wind_spd_span):
+
+    e = 0
+
+    for index, row in test_df.iterrows():
+        params = direction_speed_weighted_simple_linear_regression(train_df, y_name, x_name, wind_dir_name, row[wind_dir_name], wind_dir_span, row[x_name], wind_spd_span)
+        e += math.fabs(row[y_name]-(row[x_name]*params[0, 0]+params[0, 1]))
+
+    return e/test_df.shape[0]
+
+
+#####################################################
+##################### Utils #########################
+#####################################################
+
+def degrees_distance(angle_a, angle_b):
+
+    return min(math.fabs(angle_a-angle_b), 360-math.fabs(angle_a-angle_b))
