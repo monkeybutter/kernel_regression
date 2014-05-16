@@ -25,9 +25,9 @@ for dataset in datasets:
         print('___________')
         print('ME no regression: {}'.format(me_no_regression(test_df, 'MetarwindSpeed', 'WindSpd')))
         print('ME simple regression: {}'.format(me_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd')))
-        #for width in [5, 10, 20, 30, 40, 60, 90, 120, 180]:
-        print('ME direction weighted simple regression (width=15): {}'.format(me_direction_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15)))
-        print('ME direction speed weighted simple regression: {}'.format(me_direction_speed_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15, 5)))
+        for width in [5, 10, 20, 30, 40, 60, 90, 120, 180]:
+            print('ME direction weighted simple regression (width={}): {}'.format(width, me_direction_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', width)))
+        #print('ME direction speed weighted simple regression: {}'.format(me_direction_speed_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15, 100)))
 
     """
 for i in range(20):

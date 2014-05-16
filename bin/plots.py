@@ -112,7 +112,7 @@ def plot_function():
         else:
             return 70.0/81.0 * (1-math.fabs(x/2)**3)**3
     return ggplot(pd.DataFrame({'x':np.arange(-3,4)}), aes(x='x')) + \
-    stat_function(fun= lambda x: tricube(x),color="green")
+    stat_function(fun=lambda x: tricube(x), color="green")
     #stat_function(fun=np.sin,color="red") + \
     #stat_function(fun=np.cos,color="blue") + \
     #stat_function(fun= lambda x:x**2)

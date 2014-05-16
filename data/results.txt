@@ -1,0 +1,89 @@
+print('___________')
+print('ME no regression: {}'.format(me_no_regression(test_df, 'MetarwindSpeed', 'WindSpd')))
+print('ME simple regression: {}'.format(me_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd')))
+print('ME direction weighted simple regression (width=15): {}'.format(me_direction_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15)))
+print('ME direction speed weighted simple regression: {}'.format(me_direction_speed_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15, 5)))
+
+
+../data/LEBBData.csv
+___________
+ME no regression: 5.52322598379
+ME simple regression: 2.77213580344
+ME direction weighted simple regression (width=15): 2.58481132717
+ME direction speed weighted simple regression: 2.59213129341
+___________
+ME no regression: 5.51226171523
+ME simple regression: 2.85400900338
+ME direction weighted simple regression (width=15): 2.63035655037
+ME direction speed weighted simple regression: 2.63436660425
+___________
+ME no regression: 5.4612143068
+ME simple regression: 2.84977677962
+ME direction weighted simple regression (width=15): 2.65584655865
+ME direction speed weighted simple regression: 2.66102802167
+___________
+ME no regression: 5.406951572
+ME simple regression: 2.79066583611
+ME direction weighted simple regression (width=15): 2.5892215828
+ME direction speed weighted simple regression: 2.59831058896
+___________
+ME no regression: 5.58803291241
+ME simple regression: 2.92782533377
+ME direction weighted simple regression (width=15): 2.73116073595
+ME direction speed weighted simple regression: 2.73973245634
+
+
+../data/LESOData.csv
+___________
+ME no regression: 3.41661801239
+ME simple regression: 2.19373759567
+ME direction weighted simple regression (width=15): 2.09974116197
+ME direction speed weighted simple regression: 2.10249097767
+___________
+ME no regression: 3.50010228167
+ME simple regression: 2.18982868574
+ME direction weighted simple regression (width=15): 2.1433278311
+ME direction speed weighted simple regression: 2.15228158852
+___________
+ME no regression: 3.61044287822
+ME simple regression: 2.15590377496
+ME direction weighted simple regression (width=15): 2.08339191796
+ME direction speed weighted simple regression: 2.08350922118
+___________
+ME no regression: 3.54458766279
+ME simple regression: 2.10479406828
+ME direction weighted simple regression (width=15): 2.03045145983
+ME direction speed weighted simple regression: 2.04026332579
+___________
+ME no regression: 3.34421302746
+ME simple regression: 2.0767169206
+ME direction weighted simple regression (width=15): 2.00147938302
+ME direction speed weighted simple regression: 1.9971480283
+
+
+../data/LEVTData.csv
+___________
+ME no regression: 3.15277788635
+ME simple regression: 3.0502955845
+ME direction weighted simple regression (width=15): 2.66853647638
+ME direction speed weighted simple regression: 2.65190280969
+___________
+ME no regression: 3.22764761888
+ME simple regression: 3.12346444363
+ME direction weighted simple regression (width=15): 2.70568155602
+ME direction speed weighted simple regression: 2.69026974186
+___________
+ME no regression: 3.20475946604
+ME simple regression: 3.09394847932
+ME direction weighted simple regression (width=15): 2.6546210384
+ME direction speed weighted simple regression: 2.63857276262
+___________
+ME no regression: 3.23286782124
+ME simple regression: 3.15427542065
+ME direction weighted simple regression (width=15): 2.69905935711
+ME direction speed weighted simple regression: 2.69853406514
+___________
+ME no regression: 3.23653864637
+ME simple regression: 3.14861696667
+ME direction weighted simple regression (width=15): 2.70291952518
+ME direction speed weighted simple regression: 2.68826865273

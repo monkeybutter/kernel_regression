@@ -123,7 +123,7 @@ def direction_speed_weighted_simple_linear_regression(df, y_name, x_name, wind_d
                 else:
                     w[i, j] = 0.0
                 if math.fabs(df[x_name].iloc[i]-wind_spd_centre) < wind_spd_span:
-                    w[i, j] *= 70.0/81.0 * (1-math.fabs((df[x_name].iloc[i]-wind_spd_centre) / wind_spd_span)**3)**3
+                    w[i, j] *= 70.0/81.0 * (1-math.fabs((df[x_name].iloc[i]-wind_spd_centre)/wind_spd_span)**3)**3
 
     b = y * w * x.T * np.linalg.inv(x * w * x.T)
     return b
