@@ -9,25 +9,31 @@ datasets = ['../data/LEBBData.csv', '../data/LESOData.csv', '../data/LEVTData.cs
 
 for dataset in datasets:
 
+    print(dataset[-12:])
+
     df = pandas.read_csv(dataset, na_values=['NaN', ' NaN'])
     df = df[np.isfinite(df['MetarwindSpeed'])]
     df = df[np.isfinite(df['WindSpd'])]
     df = df[np.isfinite(df['WindDir'])]
 
-    print(dataset)
+    f = open('../data/results1_{}'.format(dataset[-12:]), 'w')
+    f.write('me_no_regr,me_simpl_regr,me_dir_w_simpl_regr,width\n')
 
-    for i in range(5):
+    for i in range(10):
+
+        print(i)
 
         rows = random.sample(df.index, int(df.shape[0]*.75))
         train_df = df.ix[rows]
         test_df = df.drop(rows)
 
-        print('___________')
-        print('ME no regression: {}'.format(me_no_regression(test_df, 'MetarwindSpeed', 'WindSpd')))
-        print('ME simple regression: {}'.format(me_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd')))
         for width in [5, 10, 20, 30, 40, 60, 90, 120, 180]:
-            print('ME direction weighted simple regression (width={}): {}'.format(width, me_direction_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', width)))
-        #print('ME direction speed weighted simple regression: {}'.format(me_direction_speed_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', 15, 100)))
+            f.write('{},'.format(me_no_regression(test_df, 'MetarwindSpeed', 'WindSpd')))
+            f.write('{},'.format(me_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd')))
+            f.write('{},{}\n'.format(me_direction_weighted_simple_linear_regression(test_df, train_df, 'MetarwindSpeed', 'WindSpd', 'WindDir', width), width))
+
+    f.close()
+
 
     """
 for i in range(20):
