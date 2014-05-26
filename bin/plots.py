@@ -92,6 +92,52 @@ def plot_wind_data_kernel(speed, width):
         xlim(-.9, 40) + \
         ylim(-.9, 30)
 
+
+def plot_kernel_widths():
+
+    dfLEBB = pd.read_csv('../data/results1_LEBBData.csv')
+    dfLESO = pd.read_csv('../data/results1_LESOData.csv')
+    dfLEVT = pd.read_csv('../data/results1_LEVTData.csv')
+
+    df2LEBB = dfLEBB.groupby('width', as_index=False).mean()
+    df2LESO = dfLESO.groupby('width', as_index=False).mean()
+    df2LEVT = dfLEVT.groupby('width', as_index=False).mean()
+
+    df3LEBB = dfLEBB.groupby('width').std()
+    df3LESO = dfLESO.groupby('width').std()
+    df3LEVT = dfLEVT.groupby('width').std()
+
+
+
+    tckLEBB = interpolate.splrep(df2LEBB.width.values, df2LEBB.me_dir_w_simpl_regr, s=0)
+    tckLESO = interpolate.splrep(df2LESO.width.values, df2LESO.me_dir_w_simpl_regr, s=0)
+    tckLEVT = interpolate.splrep(df2LEVT.width.values, df2LEVT.me_dir_w_simpl_regr, s=0)
+
+    x_new = np.arange(5,180,1)
+
+    yLEBB_new = interpolate.splev(x_new, tckLEBB, der=0)
+    yLESO_new = interpolate.splev(x_new, tckLESO, der=0)
+    yLEVT_new = interpolate.splev(x_new, tckLEVT, der=0)
+
+    daLEBB = np.vstack([x_new, yLEBB_new]).transpose()
+    daLESO = np.vstack([x_new, yLESO_new]).transpose()
+    daLEVT = np.vstack([x_new, yLEVT_new]).transpose()
+
+
+    df4LEBB = pd.DataFrame(daLEBB, columns=['xs', 'ys'])
+    df4LESO = pd.DataFrame(daLESO, columns=['xs', 'ys'])
+    df4LEVT = pd.DataFrame(daLEVT, columns=['xs', 'ys'])
+
+           #
+    return ggplot(aes(x='width', y='me_dir_w_simpl_regr'), data=df2LEBB) + \
+           geom_point(color='blue') + geom_line(aes(x='xs', y='ys'), data=df4LEBB, color='blue') +\
+           geom_point(aes(x='width', y='me_dir_w_simpl_regr'), data=df2LESO, color='purple') + \
+           geom_line(aes(x='xs', y='ys'), data=df4LESO, color='purple') + \
+           geom_point(aes(x='width', y='me_dir_w_simpl_regr'), data=df2LEVT, color='orange') + \
+           geom_line(aes(x='xs', y='ys'), data=df4LEVT, color='orange') + \
+           xlim(-5, 185) + \
+           ylim(1.5, 3.5)
+
 def test_alpha():
     #### Alpha testing #####
     x_values = np.arange(0, 41, 1)
