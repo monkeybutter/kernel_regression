@@ -19,7 +19,7 @@ for dataset in datasets:
     f = open('../data/results1_{}'.format(dataset[-12:]), 'w')
     f.write('me_no_regr,me_simpl_regr,me_dir_w_simpl_regr,width\n')
 
-    for i in range(10):
+    for i in range(4):
 
         print(i)
 
